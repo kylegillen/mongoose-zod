@@ -3,7 +3,12 @@ export { z } from 'zod';
 import M, { Schema } from 'mongoose';
 import { createRequire } from 'module';
 
-// src/index.ts
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 var MongooseTypeOptionsSymbol = Symbol.for("MongooseTypeOptions");
 var MongooseSchemaOptionsSymbol = Symbol.for("MongooseSchemaOptions");
 var ZodMongoose = class extends z.ZodType {
@@ -74,33 +79,21 @@ var genTimestampsSchema = (createdAtField = "createdAt", updatedAtField = "updat
 };
 var noCastFn = (value) => value;
 var MongooseZodBoolean = class extends M.SchemaTypes.Boolean {
-  constructor() {
-    super(...arguments);
-    this.cast = noCastFn;
-  }
+  cast = noCastFn;
 };
-MongooseZodBoolean.schemaName = "MongooseZodBoolean";
+__publicField(MongooseZodBoolean, "schemaName", "MongooseZodBoolean");
 var MongooseZodDate = class extends M.SchemaTypes.Date {
-  constructor() {
-    super(...arguments);
-    this.cast = noCastFn;
-  }
+  cast = noCastFn;
 };
-MongooseZodDate.schemaName = "MongooseZodDate";
+__publicField(MongooseZodDate, "schemaName", "MongooseZodDate");
 var MongooseZodNumber = class extends M.SchemaTypes.Number {
-  constructor() {
-    super(...arguments);
-    this.cast = noCastFn;
-  }
+  cast = noCastFn;
 };
-MongooseZodNumber.schemaName = "MongooseZodNumber";
+__publicField(MongooseZodNumber, "schemaName", "MongooseZodNumber");
 var MongooseZodString = class extends M.SchemaTypes.String {
-  constructor() {
-    super(...arguments);
-    this.cast = noCastFn;
-  }
+  cast = noCastFn;
 };
-MongooseZodString.schemaName = "MongooseZodString";
+__publicField(MongooseZodString, "schemaName", "MongooseZodString");
 var registerCustomMongooseZodTypes = () => {
   Object.assign(M.Schema.Types, {
     MongooseZodBoolean,

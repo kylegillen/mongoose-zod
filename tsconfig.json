@@ -21,8 +21,8 @@
 
   "compilerOptions": {
     "outDir": "./dist",
-    "module": "esnext",
-    "target": "es2017",
+    "module": "ESNext",
+    "target": "ESNext",
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
@@ -33,6 +33,6 @@
   "include": ["src/**/*.ts"],
 
   "ts-node": {
-    "esm": true
+    "esm": false
   },
 }
