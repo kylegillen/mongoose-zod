@@ -1,11 +1,9 @@
-'use client'
+import z5, { z } from 'zod';
+export { z } from 'zod';
+import M, { Schema } from 'mongoose';
+import { createRequire } from 'module';
 
 // src/index.ts
-import { z as z6 } from "zod";
-
-// src/extensions.ts
-import { z } from "zod";
-import { z as z2 } from "zod";
 var MongooseTypeOptionsSymbol = Symbol.for("MongooseTypeOptions");
 var MongooseSchemaOptionsSymbol = Symbol.for("MongooseSchemaOptions");
 var ZodMongoose = class extends z.ZodType {
@@ -52,16 +50,12 @@ var addMongooseTypeOptionsToZodPrototype = (toZ) => {
 // src/errors.ts
 var MongooseZodError = class extends Error {
 };
-
-// src/mongoose-helpers.ts
-import M from "mongoose";
-import { z as z3 } from "zod";
-var DateFieldZod = () => z3.date().default(/* @__PURE__ */ new Date());
+var DateFieldZod = () => z.date().default(/* @__PURE__ */ new Date());
 var genTimestampsSchema = (createdAtField = "createdAt", updatedAtField = "updatedAt") => {
   if (createdAtField != null && updatedAtField != null && createdAtField === updatedAtField) {
     throw new MongooseZodError("`createdAt` and `updatedAt` fields must be different");
   }
-  const schema = z3.object({
+  const schema = z.object({
     ...createdAtField != null && {
       [createdAtField]: DateFieldZod().mongooseTypeOptions({ immutable: true, index: true })
     },
@@ -116,13 +110,6 @@ var registerCustomMongooseZodTypes = () => {
   });
 };
 var bufferMongooseGetter = (value) => value instanceof M.mongo.Binary ? value.buffer : value;
-
-// src/to-mongoose.ts
-import M3, { Schema as MongooseSchema } from "mongoose";
-import z5 from "zod";
-
-// src/setup.ts
-import { z as originalZ } from "zod";
 var setupState = { isSetUp: false };
 var setup = (options = {}) => {
   if (setupState.isSetUp) {
@@ -133,13 +120,10 @@ var setup = (options = {}) => {
   addMongooseToZodPrototype(null);
   addMongooseTypeOptionsToZodPrototype(null);
   if (options.z !== null) {
-    addMongooseToZodPrototype(options.z || originalZ);
-    addMongooseTypeOptionsToZodPrototype(options.z || originalZ);
+    addMongooseToZodPrototype(options.z || z);
+    addMongooseTypeOptionsToZodPrototype(options.z || z);
   }
 };
-
-// src/utils.ts
-import { createRequire } from "module";
 var getValidEnumValues = (obj) => {
   const validKeys = Object.keys(obj).filter((k) => typeof obj[obj[k]] !== "number");
   const filtered = {};
@@ -157,10 +141,6 @@ var tryImportModule = (id, importMeta) => {
     return null;
   }
 };
-
-// src/zod-helpers.ts
-import M2 from "mongoose";
-import { z as z4 } from "zod";
 var isZodType = (schema, typeName) => {
   return schema.constructor.name === typeName;
 };
@@ -221,22 +201,22 @@ var unwrapZodSchema = (schema, options = {}, _features = {}) => {
 };
 var zodInstanceofOriginalClasses = /* @__PURE__ */ new WeakMap();
 var mongooseZodCustomType = (typeName, params) => {
-  const instanceClass = typeName === "Buffer" ? Buffer : M2.Types[typeName];
-  const typeClass = M2.Schema.Types[typeName];
-  const result = z4.instanceof(instanceClass, params);
+  const instanceClass = typeName === "Buffer" ? Buffer : M.Types[typeName];
+  const typeClass = M.Schema.Types[typeName];
+  const result = z.instanceof(instanceClass, params);
   zodInstanceofOriginalClasses.set(result._def.schema, typeClass);
   return result;
 };
 
 // src/to-mongoose.ts
-var { Mixed: MongooseMixed } = M3.Schema.Types;
-var originalMongooseLean = M3.Query.prototype.lean;
+var { Mixed: MongooseMixed } = M.Schema.Types;
+var originalMongooseLean = M.Query.prototype.lean;
 registerCustomMongooseZodTypes();
 var mlvPlugin = tryImportModule("mongoose-lean-virtuals", import.meta);
 var mldPlugin = tryImportModule("mongoose-lean-defaults", import.meta);
 var mlgPlugin = tryImportModule("mongoose-lean-getters", import.meta);
 var getFixedOptionFn = (fn) => function(...args) {
-  const thisFixed = this && this instanceof M3.Document ? this : void 0;
+  const thisFixed = this && this instanceof M.Document ? this : void 0;
   return fn.apply(thisFixed, args);
 };
 var getStrictOptionValue = (unknownKeys, schemaFeatures) => {
@@ -334,7 +314,7 @@ var addMongooseSchemaFields = (zodSchema, monSchema, context) => {
   let errMsgAddendum = "";
   const typeKey = (isRoot ? monSchemaOptions == null ? void 0 : monSchemaOptions.typeKey : context.typeKey) ?? "type";
   if (isZodType(zodSchemaFinal, "ZodObject")) {
-    const relevantSchema = isRoot ? monSchema : new MongooseSchema(
+    const relevantSchema = isRoot ? monSchema : new Schema(
       {},
       {
         strict: getStrictOptionValue(unknownKeys, schemaFeatures),
@@ -419,7 +399,7 @@ var addMongooseSchemaFields = (zodSchema, monSchema, context) => {
   } else if (isZodType(zodSchemaFinal, "ZodAny")) {
     const instanceOfClass = zodInstanceofOriginalClasses.get(zodSchemaFinal);
     fieldType = instanceOfClass || MongooseMixed;
-    if (instanceOfClass === M3.Schema.Types.Buffer && !("get" in commonFieldOptions)) {
+    if (instanceOfClass === M.Schema.Types.Buffer && !("get" in commonFieldOptions)) {
       commonFieldOptions.get = bufferMongooseGetter;
     }
   } else if (isZodType(zodSchemaFinal, "ZodEffects")) {
@@ -457,7 +437,7 @@ var addMongooseSchemaFields = (zodSchema, monSchema, context) => {
         }
         let objMaybeCopy = obj;
         for (const [k, v] of Object.entries(objMaybeCopy)) {
-          if (v instanceof M3.mongo.Binary) {
+          if (v instanceof M.mongo.Binary) {
             if (objMaybeCopy === obj) {
               objMaybeCopy = { ...obj };
             }
@@ -498,7 +478,7 @@ var toMongooseSchema = (rootZodSchema, options = {}) => {
   const addMLVPlugin = mlvPlugin && !isPluginDisabled("leanVirtuals", dp);
   const addMLDPlugin = mldPlugin && !isPluginDisabled("leanDefaults", dp);
   const addMLGPlugin = mlgPlugin && !isPluginDisabled("leanGetters", dp);
-  const schema = new MongooseSchema(
+  const schema = new Schema(
     {},
     {
       id: false,
@@ -531,19 +511,7 @@ var toMongooseSchema = (rootZodSchema, options = {}) => {
 };
 
 // src/index.ts
-addMongooseToZodPrototype(z6);
-addMongooseTypeOptionsToZodPrototype(z6);
-export {
-  MongooseSchemaOptionsSymbol,
-  MongooseTypeOptionsSymbol,
-  MongooseZodError,
-  ZodMongoose,
-  addMongooseTypeOptions,
-  bufferMongooseGetter,
-  genTimestampsSchema,
-  mongooseZodCustomType,
-  setup,
-  toMongooseSchema,
-  toZodMongooseSchema,
-  z2 as z
-};
+addMongooseToZodPrototype(z);
+addMongooseTypeOptionsToZodPrototype(z);
+
+export { MongooseSchemaOptionsSymbol, MongooseTypeOptionsSymbol, MongooseZodError, ZodMongoose, addMongooseTypeOptions, bufferMongooseGetter, genTimestampsSchema, mongooseZodCustomType, setup, toMongooseSchema, toZodMongooseSchema };
