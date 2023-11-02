@@ -25,7 +25,6 @@
     "target": "es2017",
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
-    "importsNotUsedAsValues": "error",
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "noErrorTruncation": true

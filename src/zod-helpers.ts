@@ -38,6 +38,7 @@ export interface ZodTypes {
   ZodString: z.ZodString;
   ZodTuple: z.ZodTuple<any>;
   ZodUnion: z.ZodUnion<any>;
+  // @ts-ignore
   ZodDiscriminatedUnion: z.ZodDiscriminatedUnion<any, any, any>;
   ZodUnknown: z.ZodUnknown;
   ZodVoid: z.ZodVoid;
@@ -147,6 +148,7 @@ export const mongooseZodCustomType = <T extends keyof typeof M.Types & keyof typ
 
   type TFixed = T extends 'Buffer' ? BufferConstructor : (typeof M.Types)[T];
 
+  // @ts-ignore
   const result = z.instanceof(instanceClass, params) as z.ZodType<
     InstanceType<TFixed>,
     z.ZodTypeDef,

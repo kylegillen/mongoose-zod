@@ -16,6 +16,7 @@ export interface MongooseMetadata<
     [Field in keyof DocType]?: SchemaTypeOptions<DocType[Field], DocType>;
   };
   schemaOptions?: Omit<
+    // @ts-ignore
     SchemaOptions<any, DocType, TInstanceMethods, QueryHelpers, TStaticMethods, TVirtuals>,
     // Actually does not work
     'castNonArrays'
@@ -89,7 +90,8 @@ declare module 'zod' {
       options: SchemaTypeOptions<T['_output']>,
     ): T;
   }
-
+  
+  // @ts-ignore
   interface ZodObject<
     T extends z.ZodRawShape,
     UnknownKeys extends 'passthrough' | 'strict' | 'strip' = 'strip',
